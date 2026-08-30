@@ -20,16 +20,18 @@ if [ ! -z "$LOCAL_IP" ]; then
     fi
 fi
 
-HMDM_WAR="$(basename -- $HMDM_URL)"
+if [ "$HMDM_URL" != "local" ]; then
+    HMDM_WAR="$(basename -- "$HMDM_URL")"
 
-if [ -f "$CACHE_DIR/$HMDM_WAR" ] && [ "$FORCE_RECONFIGURE" = "true" ]; then
-    rm -f $CACHE_DIR/$HMDM_WAR
-fi
+    if [ -f "$CACHE_DIR/$HMDM_WAR" ] && [ "$FORCE_RECONFIGURE" = "true" ]; then
+        rm -f "$CACHE_DIR/$HMDM_WAR"
+    fi
 
-if [ ! -f "$CACHE_DIR/$HMDM_WAR" ]; then
-    if ! wget $DOWNLOAD_CREDENTIALS $HMDM_URL -O $CACHE_DIR/$HMDM_WAR; then
-        echo "Failed to retrieve $HMDM_URL!"
-        exit 1
+    if [ ! -f "$CACHE_DIR/$HMDM_WAR" ]; then
+        if ! wget $DOWNLOAD_CREDENTIALS "$HMDM_URL" -O "$CACHE_DIR/$HMDM_WAR"; then
+            echo "Failed to retrieve $HMDM_URL!"
+            exit 1
+        fi
     fi
 fi
 

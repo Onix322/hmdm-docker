@@ -34,10 +34,13 @@ services:
       - ./volumes/db:/var/lib/postgresql/data
 
   hmdm:
+    # Use build if you want to compile the hmdm-server manually with HMDM_URL='local' from Dockerfile / .env.example
+    # build: .
     image: headwindmdm/hmdm:0.1.9
     ports:
       # Uncomment this port forwarding if you want to use plain HTTP instead of HTTPS
-      #- 80:8080
+      # Make sure certbot is using another port or commented !!!
+      # - 80:8080
       - 443:8443
       - 31000:31000
     volumes:

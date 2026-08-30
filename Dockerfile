@@ -28,6 +28,10 @@ ENV SHARED_SECRET=changeme-C3z9vi54
 
 ENV HMDM_VARIANT=os
 ENV DOWNLOAD_CREDENTIALS=
+
+# Set HMDM_URL='local' if you built the server manually.
+# Place your compiled .war file directly into ./volumes/webapps/
+#ENV HMDM_URL='local'
 ENV HMDM_URL=https://h-mdm.com/files/hmdm-5.40.1-$HMDM_VARIANT.war
 ENV CLIENT_VERSION=6.37
 
