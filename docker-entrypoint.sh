@@ -20,16 +20,18 @@ if [ ! -z "$LOCAL_IP" ]; then
     fi
 fi
 
-HMDM_WAR="$(basename -- $HMDM_URL)"
+if [ "$HMDM_URL" != "local" ]; then
+    HMDM_WAR="$(basename -- "$HMDM_URL")"
 
-if [ -f "$CACHE_DIR/$HMDM_WAR" ] && [ "$FORCE_RECONFIGURE" = "true" ]; then
-    rm -f $CACHE_DIR/$HMDM_WAR
-fi
+    if [ -f "$CACHE_DIR/$HMDM_WAR" ] && [ "$FORCE_RECONFIGURE" = "true" ]; then
+        rm -f "$CACHE_DIR/$HMDM_WAR"
+    fi
 
-if [ ! -f "$CACHE_DIR/$HMDM_WAR" ]; then
-    if ! wget $DOWNLOAD_CREDENTIALS $HMDM_URL -O $CACHE_DIR/$HMDM_WAR; then
-        echo "Failed to retrieve $HMDM_URL!"
-        exit 1
+    if [ ! -f "$CACHE_DIR/$HMDM_WAR" ]; then
+        if ! wget $DOWNLOAD_CREDENTIALS "$HMDM_URL" -O "$CACHE_DIR/$HMDM_WAR"; then
+            echo "Failed to retrieve $HMDM_URL!"
+            exit 1
+        fi
     fi
 fi
 
@@ -51,8 +53,37 @@ if [ ! -d $TOMCAT_DIR/conf/Catalina/localhost ]; then
     mkdir -p $TOMCAT_DIR/conf/Catalina/localhost
 fi
 
+# Set default values for optional variables if not defined
+OIDC_ENABLE="${OIDC_ENABLE:-false}"
+OIDC_SCOPE="${OIDC_SCOPE:-openid profile email}"
+OIDC_RESPONSE_TYPE="${OIDC_RESPONSE_TYPE:-code}"
+
 if [ ! -f "$TOMCAT_DIR/conf/Catalina/localhost/ROOT.xml" ] || [ "$FORCE_RECONFIGURE" = "true" ]; then
-    cat $TEMPLATE_DIR/conf/context_template.xml | sed "s|_SQL_HOST_|$SQL_HOST|g; s|_SQL_PORT_|$SQL_PORT|g; s|_SQL_BASE_|$SQL_BASE|g; s|_SQL_USER_|$SQL_USER|g; s|_SQL_PASS_|$SQL_PASS|g; s|_PROTOCOL_|$PROTOCOL|g; s|_BASE_DOMAIN_|$BASE_DOMAIN|g; s|_SHARED_SECRET_|$SHARED_SECRET|g;" > $TOMCAT_DIR/conf/Catalina/localhost/ROOT.xml 
+    echo "Generating Tomcat context XML configuration..."
+    
+    sed \
+        -e "s|_SQL_HOST_|$SQL_HOST|g" \
+        -e "s|_SQL_PORT_|$SQL_PORT|g" \
+        -e "s|_SQL_BASE_|$SQL_BASE|g" \
+        -e "s|_SQL_USER_|$SQL_USER|g" \
+        -e "s|_SQL_PASS_|$SQL_PASS|g" \
+        -e "s|_PROTOCOL_|$PROTOCOL|g" \
+        -e "s|_BASE_DOMAIN_|$BASE_DOMAIN|g" \
+        -e "s|_SHARED_SECRET_|$SHARED_SECRET|g" \
+        -e "s|_OIDC_ENABLE_|$OIDC_ENABLE|g" \
+        -e "s|_OIDC_AUTHORIZE_URL_|$OIDC_AUTHORIZE_URL|g" \
+        -e "s|_OIDC_JWKS_URL_|$OIDC_JWKS_URL|g" \
+        -e "s|_OIDC_ISSUER_|$OIDC_ISSUER|g" \
+        -e "s|_OIDC_TOKEN_URL_|$OIDC_TOKEN_URL|g" \
+        -e "s|_OIDC_USER_INFO_|$OIDC_USER_INFO|g" \
+        -e "s|_OIDC_CLIENT_ID_|$OIDC_CLIENT_ID|g" \
+        -e "s|_OIDC_AUDIENCE_|$OIDC_AUDIENCE|g" \
+        -e "s|_OIDC_REDIRECT_URL_|$OIDC_REDIRECT_URL|g" \
+        -e "s|_OIDC_SCOPE_|$OIDC_SCOPE|g" \
+        -e "s|_OIDC_RESPONSE_TYPE_|$OIDC_RESPONSE_TYPE|g" \
+        "$TEMPLATE_DIR/conf/context_template.xml" > "$TOMCAT_DIR/conf/Catalina/localhost/ROOT.xml"
+        
+    echo "Context XML generated successfully."
 fi
 
 for DIR in cache files plugins logs; do

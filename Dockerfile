@@ -28,6 +28,10 @@ ENV SHARED_SECRET=changeme-C3z9vi54
 
 ENV HMDM_VARIANT=os
 ENV DOWNLOAD_CREDENTIALS=
+
+# Set HMDM_URL='local' if you built the server manually.
+# Place your compiled .war file directly into ./volumes/webapps/
+#ENV HMDM_URL='local'
 ENV HMDM_URL=https://h-mdm.com/files/hmdm-5.40.1-$HMDM_VARIANT.war
 ENV CLIENT_VERSION=6.37
 
@@ -52,6 +56,19 @@ ENV HTTPS_LETSENCRYPT=true
 ENV HTTPS_CERT=cert.pem
 ENV HTTPS_FULLCHAIN=fullchain.pem
 ENV HTTPS_PRIVKEY=privkey.pem
+
+# OICD provider settings
+ENV OIDC_ENABLE=""
+ENV OIDC_AUTHORIZE_URL=""
+ENV OIDC_JWKS_URL=""
+ENV OIDC_ISSUER=""
+ENV OIDC_TOKEN_URL=""
+ENV OIDC_USER_INFO=""
+ENV OIDC_CLIENT_ID=""
+ENV OIDC_AUDIENCE=""
+ENV OIDC_REDIRECT_URL=""
+ENV OIDC_SCOPE="openid profile email"
+ENV OIDC_RESPONSE_TYPE="code"
 
 EXPOSE 8080
 EXPOSE 8443
