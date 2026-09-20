@@ -14,13 +14,13 @@ services:
   # 2. Uncomment the port 80 forwarding
   # 3. Set the environment variable in the .env file: PROTOCOL=http
   # 
-  certbot:
-    image: certbot/certbot:v1.4.0
-    volumes:
-      - ./volumes/letsencrypt:/etc/letsencrypt
-    ports: 
-      - 80:80
-    entrypoint: "certbot certonly --non-interactive --agree-tos -m ${ADMIN_EMAIL} --standalone -d ${BASE_DOMAIN}"
+  # certbot:
+    # image: certbot/certbot:v1.4.0
+    # volumes:
+      # - ./volumes/letsencrypt:/etc/letsencrypt
+    # ports: 
+      # - 80:80
+    # entrypoint: "certbot certonly --non-interactive --agree-tos -m ${ADMIN_EMAIL} --standalone -d ${BASE_DOMAIN}"
 
   postgresql:
     image: postgres:12-alpine
@@ -35,12 +35,12 @@ services:
 
   hmdm:
     # Use build if you want to compile the hmdm-server manually with HMDM_URL='local' from Dockerfile / .env.example
-    # build: .
-    image: headwindmdm/hmdm:0.1.9
+    build: .
+    # image: headwindmdm/hmdm:0.1.9
     ports:
       # Uncomment this port forwarding if you want to use plain HTTP instead of HTTPS
       # Make sure certbot is using another port or commented !!!
-      # - 80:8080
+      - 80:8080
       - 443:8443
       - 31000:31000
     volumes:
@@ -63,4 +63,17 @@ services:
       HMDM_URL: ${HMDM_URL}
       CLIENT_VERSION: ${CLIENT_VERSION}
       FORCE_RECONFIGURE: ${FORCE_RECONFIGURE}
+      OIDC_ENABLE: ${OIDC_ENABLE}
+      OIDC_AUTHORIZE_URL: ${OIDC_AUTHORIZE_URL}
+      OIDC_JWKS_URL: ${OIDC_JWKS_URL}
+      OIDC_ISSUER: ${OIDC_ISSUER}
+      OIDC_TOKEN_URL: ${OIDC_TOKEN_URL}
+      OIDC_USER_INFO: ${OIDC_USER_INFO}
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      OIDC_AUDIENCE: ${OIDC_AUDIENCE}
+      OIDC_REDIRECT_URL: ${OIDC_REDIRECT_URL}
+      OIDC_SCOPE: ${OIDC_SCOPE}
+      OIDC_RESPONSE_TYPE: ${OIDC_RESPONSE_TYPE}
+      OIDC_PKCE: ${OIDC_PKCE}
+      OIDC_SECRET: ${OIDC_SECRET}
 
