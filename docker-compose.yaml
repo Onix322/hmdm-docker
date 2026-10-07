@@ -41,8 +41,10 @@ services:
       # Uncomment this port forwarding if you want to use plain HTTP instead of HTTPS
       # Make sure certbot is using another port or commented !!!
       - 80:8080
-      - 443:8443
+      # - 443:8443
       - 31000:31000
+    env_file:
+      - .env
     volumes:
       - ./volumes/work:/usr/local/tomcat/work
       - ./volumes/letsencrypt:/etc/letsencrypt
@@ -74,6 +76,3 @@ services:
       OIDC_REDIRECT_URL: ${OIDC_REDIRECT_URL}
       OIDC_SCOPE: ${OIDC_SCOPE}
       OIDC_RESPONSE_TYPE: ${OIDC_RESPONSE_TYPE}
-      OIDC_PKCE: ${OIDC_PKCE}
-      OIDC_SECRET: ${OIDC_SECRET}
-
